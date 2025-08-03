@@ -12,7 +12,7 @@ ingresos
 
 library(camcorder)
 
-camcorder::gg_record(dir = "gráficos/grabación/",
+camcorder::gg_record(dir = "gráficos/grabación_1/",
                      width = 8,
                      height = 8,
                      device = "jpeg")
@@ -23,7 +23,8 @@ ingresos |>
 
 
 # gráfico ----
-ingresos_filt <- ingresos |> 
+ingresos_filt <- ingresos |>
+  filter(nivel == "comuna sexo") |> 
   select(-1) |> 
   filter(variable == "Promedio ingreso imponible de la población en edad de trabajar") |>
   mutate(region = stringr::str_remove(region,
@@ -72,3 +73,10 @@ ingresos_filt |>
   labs(y = NULL, color = "Género:") +
   theme(strip.text = element_text(face = "bold", size = 11),
         panel.spacing.x = unit(8, "mm"))
+
+camcorder::gg_playback(image_resize = 1080, 
+                       last_as_first = TRUE,
+                       first_image_duration = 5,
+                       last_image_duration = 15,
+                       frame_duration = 0.2,
+                       background = "white")
