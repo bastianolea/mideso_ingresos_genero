@@ -1,0 +1,5 @@
+ffmpeg -f gif -i "gráficos/grabación_2/2025_08_05_23_15_58.gif" -vf "crop=1280:960"  -loop 0 grabación_2.webp
+
+ffmpeg -f gif -i "gráficos/grabación_3/2025_08_05_23_16_34.gif" -vf "crop=1280:960"  -loop 0 grabación_3.webp
+
+ffmpeg -f gif -i "gráficos/grabación_4/2025_08_05_23_17_25.gif" -vf "crop=1280:960"  -loop 0 grabación_4.webp

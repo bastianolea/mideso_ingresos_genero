@@ -112,11 +112,11 @@ datos |>
   labs(x = NULL, y = .variable)
 
 
-camcorder::gg_playback(image_resize = 1080, 
-                       last_as_first = TRUE,
+camcorder::gg_playback(image_resize = 1280, 
+                       last_as_first = FALSE,
                        first_image_duration = 5,
                        last_image_duration = 15,
-                       frame_duration = 0.2,
+                       frame_duration = 0.1,
                        background = color_oscuro)
 
 
@@ -198,11 +198,11 @@ datos |>
   theme(plot.margin = margin(4, 30, 4, 4))
   
 
-camcorder::gg_playback(image_resize = 1080, 
-                       last_as_first = TRUE,
+camcorder::gg_playback(image_resize = 1280, 
+                       last_as_first = F,
                        first_image_duration = 5,
                        last_image_duration = 15,
-                       frame_duration = 0.2,
+                       frame_duration = 0.1,
                        background = color_oscuro)
 
 
@@ -279,9 +279,9 @@ datos |>
                               override.aes = list(size = 4)))
 
 
-camcorder::gg_playback(image_resize = 1080, 
-                       last_as_first = TRUE,
+camcorder::gg_playback(image_resize = 1280, 
+                       last_as_first = F,
                        first_image_duration = 5,
                        last_image_duration = 15,
-                       frame_duration = 0.2,
+                       frame_duration = 0.1,
                        background = color_oscuro)
