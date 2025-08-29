@@ -147,5 +147,6 @@ n_distinct(ingresos_3$comuna)
 
 
 # guardar ----
-ingresos_3 |> 
-  write.csv2("datos/mideso_ingresos_genero.csv")
+write.csv2(ingresos_3, "datos/mideso_ingresos_genero.csv")
+
+arrow::write_parquet(ingresos_3, "app/mideso_ingresos_genero.parquet")
