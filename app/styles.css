@@ -1,0 +1,22 @@
+.grafico {
+  margin: 12px;
+  min-width: 600px;
+  overflow: scroll;
+  }
+  
+  
+.text-label {
+display: inline; 
+color: white; 
+border-radius: 4px; 
+padding-left: 4px; 
+padding-right: 4px;
+}  
+
+.fem {
+  background-color: #986DB4;
+}
+
+.masc {
+  background-color: #5AB395;
+}

@@ -96,6 +96,7 @@ ingresos_comuna_2 <- ingresos_comuna |>
 ingresos_region_2 <- ingresos_region |> 
   rename(region = desagregacion1,
          genero = desagregacion2) |> 
+  # ordenar regiones
   mutate(codigo_region = case_match(region,
                                     "Tarapacá" ~ 1,
                                     "Antofagasta" ~ 2,
@@ -113,18 +114,16 @@ ingresos_region_2 <- ingresos_region |>
                                     "Los Ríos" ~ 14,
                                     "Arica y Parinacota" ~ 15,
                                     "Ñuble" ~ 16)) |> 
-  select(-region) |> 
+  select(-region) |>
   left_join(cut_comunas |> distinct(codigo_region, region),
-            join_by(codigo_region)) |> 
-  mutate(region = stringr::str_remove(region,
-                                      c(" del General Carlos Ibáñez del Campo",
-                                        " y de la Antártica Chilena",
-                                        "Libertador General Bernardo ") |> stringr::str_c(collapse = "|"))
-  )
+            join_by(codigo_region))
 
 
 
 ingresos_2 <- bind_rows(ingresos_comuna_2, ingresos_region_2)
+
+ingresos_2 |> distinct(region)
+
 
 # limpiar ----
 ingresos_3 <- ingresos_2 |> 
@@ -136,7 +135,36 @@ ingresos_3 <- ingresos_2 |>
   # select(-nivel) |> 
   rename(valor = x2023) |> 
   # ordenar
-  relocate(codigo_region, region, codigo_comuna, comuna, genero, variable, valor)
+  relocate(codigo_region, region, codigo_comuna, comuna, genero, variable, valor) |> 
+  # ordenar regiones
+  mutate(codigo_region = case_match(region,
+                                    "Tarapacá" ~ 1,
+                                    "Antofagasta" ~ 2,
+                                    "Atacama" ~ 3,
+                                    "Coquimbo" ~ 4,
+                                    "Valparaíso" ~ 5,
+                                    "Libertador Bernardo O'Higgins" ~ 6,
+                                    "Maule" ~ 7,
+                                    "Bío Bío" ~ 8,
+                                    "La Araucanía" ~ 9,
+                                    "Los Lagos" ~ 10,
+                                    "Aysén del General Carlos Ibañez del Campo" ~ 11,
+                                    "Magallanes y la Antártica Chilena" ~ 12,
+                                    "Metropolitana" ~ 13,
+                                    "Los Ríos" ~ 14,
+                                    "Arica y Parinacota" ~ 15,
+                                    "Ñuble" ~ 16)) |> 
+  mutate(region = factor(region),
+         region = forcats::fct_reorder(region, codigo_region)) |> 
+  # acortar región
+  mutate(region_corta = stringr::str_remove(region,
+                                            c(" del General Carlos Ibáñez del Campo",
+                                              " y de la Antártica Chilena",
+                                              "Libertador General Bernardo ") |> stringr::str_c(collapse = "|"))
+  ) |> 
+  mutate(comuna_corta = case_when(comuna == "Pedro Aguirre Cerda" ~ "PAC",
+                                  comuna == "San Pedro de La paz" ~ "San Pedro",
+                                  .default = comuna))
 
 
 # revisar ----
@@ -145,8 +173,9 @@ ingresos_3 |>
 
 n_distinct(ingresos_3$comuna)
 
+ingresos <- ingresos_3
 
 # guardar ----
-write.csv2(ingresos_3, "datos/mideso_ingresos_genero.csv")
+write.csv2(ingresos, "datos/mideso_ingresos_genero.csv")
 
-arrow::write_parquet(ingresos_3, "app/mideso_ingresos_genero.parquet")
+arrow::write_parquet(ingresos, "app/mideso_ingresos_genero.parquet")
