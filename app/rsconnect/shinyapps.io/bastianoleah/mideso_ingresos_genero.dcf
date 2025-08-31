@@ -1,0 +1,12 @@
+name: mideso_ingresos_genero
+title: mideso_ingresos_genero
+username: bastianoleah
+account: bastianoleah
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15311484
+bundleId: 10841135
+url: https://bastianoleah.shinyapps.io/mideso_ingresos_genero/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
