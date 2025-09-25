@@ -53,6 +53,8 @@ options(spinner.color = color_texto,
 
 
 ui <- page_fluid(
+  
+  ## tema ----
   theme = bs_theme(
     fg = color_texto,
     bg = color_oscuro,
@@ -62,17 +64,28 @@ ui <- page_fluid(
   
   includeCSS("styles.css"),
   
+  # borde de selector
+  tags$style(
+    HTML(".selectize-input {
+             border: 1px solid", color_detalle_claro, "!important;
+             background-color:", color_claro, "!important;
+             color:", color_oscuro, "!important;
+             }")),
+  
+  
+  
   # header ----
   
   div(style = css(max_width = "1000px", margin = "auto", padding = "12px"),
       
-      h2("Comparación de ingresos, Chile"),
+      h2("Comparación de ingresos, Chile", 
+         style = css(font_weight = "bold")),
       
       div(style = "font-size: 90%;",
           markdown("[_Bastián Olea Herrera_](https://bastianolea.rbind.io)")
       ),
       
-      p("Esta plataforma visualiza datos de", strong("ingresos a nivel regional, comunal, y por género."), "Su objetivo es visibilizar diferencias de los ingresos recibidos por las personas, permitiendo compararlos por regiones y comunas, así como también producir comparaciones de brechas de género entre",
+      p("Esta plataforma visualiza datos de", strong("ingresos a nivel regional, comunal, y por género."), "Su objetivo es visibilizar diferencias de los ingresos recibidos por las y los trabajadores, permitiendo compararlos por regiones y comunas, así como también producir comparaciones de brechas de género entre",
         span("hombres", class = "text-label masc"),
         "y",
         span("mujeres.", class = "text-label fem")),
@@ -83,14 +96,15 @@ ui <- page_fluid(
       
       br(),
       
-
+      
       
       # nacional ----
       
       selectInput("variable", 
-                  "Seleccione variable:", 
+                  strong("Seleccione una variable de ingreso:"), 
                   choices = variables, 
-                  selected = "Promedio ingreso imponible de la población en edad de trabajar"
+                  selected = "Promedio ingreso imponible de la población en edad de trabajar",
+                  width = "100%"
       ),
       
       navset_pill(
@@ -102,9 +116,9 @@ ui <- page_fluid(
         ),
         nav_panel("Nacional por género", 
                   div(style = "overflow-x: scroll;",
-                  div(class = "grafico",
-                      plotOutput("grafico_nacional_genero") |> withSpinner()
-                  ))
+                      div(class = "grafico",
+                          plotOutput("grafico_nacional_genero") |> withSpinner()
+                      ))
         )
       ),
       
@@ -113,10 +127,12 @@ ui <- page_fluid(
       h2("Región"),
       
       selectInput("region", 
-                  "Seleccione región:", 
+                  strong("Seleccione una región:"), 
                   choices = unique(ingresos$region), 
-                  selected = "Metropolitana de Santiago"
+                  selected = "Metropolitana de Santiago",
+                  width = "100%"
       ),
+       
       
       h3(textOutput("nombre_region")),
       
@@ -125,49 +141,44 @@ ui <- page_fluid(
       navset_pill(
         nav_panel("Regional", 
                   div(style = "overflow-x: scroll;",
-                  div(class = "grafico",
-                      plotOutput("grafico_region") |> withSpinner()
-                  ))
+                      div(class = "grafico",
+                          plotOutput("grafico_region") |> withSpinner()
+                      ))
         ),
         nav_panel("Regional por género", 
                   div(style = "overflow-x: scroll;",
-                  div(class = "grafico",
-                      plotOutput("grafico_region_genero") |> withSpinner()
-                  ))
+                      div(class = "grafico",
+                          plotOutput("grafico_region_genero") |> withSpinner()
+                      ))
         )
       ),
       
       ## firma ----
       
       ### firma ----
-      div(
-        div(12, style = "font-size: 90%; padding: 28px;",
-               hr(),
-               markdown("Desarrollado y programado por [Bastián Olea Herrera](https://bastianolea.rbind.io) en R."),
-               
-               markdown("Puedes explorar otras [aplicaciones interactivas sobre datos sociales en mi portafolio.](https://bastianolea.github.io/shiny_apps/)"),
-               
-               markdown("Código de fuente de esta app y del procesamiento de los datos [disponible en GitHub.](https://github.com/bastianolea/mideso_ingresos_genero)"),
-               
-               #### cafecito ----
-               div(
-                 style = "max-width: 480px; margin: auto; padding: 28px",
-                 
-                 tags$style(HTML(".cafecito:hover {opacity: 75%; transition: 0.3s; color: black !important;} .cafecito a:hover {color: black}")),
-                 
-                 div(class = "cafecito",
-                     style = "transform:scale(0.6);",
-                     tags$body(HTML('<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="bastimapache" data-color="#FFDD00" data-emoji=""  data-font="Bree" data-text="Regálame un cafecito" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>'))
-                 )
-               ),
-               
-               
-               # div(style = "height: 40px")
-               
-        )
-      )
-      
+      div(style = "width: 100%;",
+          div(style = "font-size: 90%; padding: 28px;",
+              hr(),
+              markdown("Desarrollado y programado por [Bastián Olea Herrera](https://bastianolea.rbind.io) en R."),
+              
+              markdown("Puedes explorar otras [aplicaciones interactivas sobre datos sociales en mi portafolio.](https://bastianolea.github.io/shiny_apps/)"),
+              
+              markdown("Código de fuente de esta app y del procesamiento de los datos [disponible en GitHub.](https://github.com/bastianolea/mideso_ingresos_genero)")
+          )
+          
+      #     #### cafecito ----
+      #     div(
+      #       style = "width; 100%; margin: auto; padding: 28px",
+      #       
+      #       tags$style(HTML(".cafecito:hover {opacity: 75%; transition: 0.3s; color: black !important;} .cafecito a:hover {color: black}")),
+      #       
+      #       div(class = "cafecito",
+      #           style = "transform:scale(0.6);",
+      #           tags$body(HTML('<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="bastimapache" data-color="#FFDD00" data-emoji=""  data-font="Bree" data-text="Regálame un cafecito" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>'))
+      #       )
+      # )
   )
+)
 )
 
 # Define server logic required to draw a histogram
@@ -406,6 +417,7 @@ server <- function(input, output) {
   
   output$grafico_region_genero <- renderPlot({
     datos <- ingresos_comunas_region_genero()
+    
     datos <- datos |> 
       mutate(grupo = case_when(id <= 8 ~ "Mayores ingresos",
                                id > max(id)-8 ~ "Menores ingresos")) |> 
@@ -469,7 +481,7 @@ server <- function(input, output) {
                          expand = expansion(c(0, 0.1))) +
       scale_x_discrete(labels = label_wrap(20),
                        expand = expansion(c(0.05, 0.03))) +
-      labs(x = NULL, y = .variable) +
+      labs(x = NULL, y = input$variable) +
       # facetas 
       facet_wrap(~grupo, nrow = 1, scales = "free_x") +
       theme(strip.text = element_text(color = color_texto, face = "italic")) +
