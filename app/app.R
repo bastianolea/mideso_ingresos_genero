@@ -25,7 +25,7 @@ color_femenino = "#986DB4"
 color_masculino = "#5AB395"
 
 theme_set(
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 14) +
     theme(
       text = element_text(color = color_texto),
       plot.background = element_rect(fill = color_oscuro, color = NA),
@@ -62,9 +62,10 @@ ui <- page_fluid(
     font_scale = 0.9
   ),
   
+  # estilos
   includeCSS("styles.css"),
   
-  # borde de selector
+  # color de selectores
   tags$style(
     HTML(".selectize-input {
              border: 1px solid", color_detalle_claro, "!important;
@@ -73,10 +74,8 @@ ui <- page_fluid(
              }")),
   
   
-  
   # header ----
-  
-  div(style = css(max_width = "1000px", margin = "auto", padding = "12px"),
+  div(style = css(max_width = "900px", margin = "auto", padding = "12px"),
       
       h2("Comparación de ingresos, Chile", 
          style = css(font_weight = "bold")),
@@ -94,12 +93,13 @@ ui <- page_fluid(
       
       markdown("La fuente de los datos está en el [Banco Integrado de Datos](https://bidat.gob.cl/details/ficha/dataset/5384a6c7-628f-45b6-a918-6b28402affbb?page=1) de Mideso, y el código para procesar los datos y generar esta plataforma se encuentra en [éste repositorio](https://github.com/bastianolea/mideso_ingresos_genero)."),
       
-      br(),
+      # br(),
       
       
       
       # nacional ----
       
+      hr(),
       selectInput("variable", 
                   strong("Seleccione una variable de ingreso:"), 
                   choices = variables, 
@@ -124,6 +124,7 @@ ui <- page_fluid(
       
       
       # regional ----
+      hr(),
       h2("Región"),
       
       selectInput("region", 
@@ -166,7 +167,7 @@ ui <- page_fluid(
               markdown("Código de fuente de esta app y del procesamiento de los datos [disponible en GitHub.](https://github.com/bastianolea/mideso_ingresos_genero)")
           )
           
-      #     #### cafecito ----
+      #     #### cafecito
       #     div(
       #       style = "width; 100%; margin: auto; padding: 28px",
       #       
@@ -181,7 +182,7 @@ ui <- page_fluid(
 )
 )
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
   
   # input$variable <- "Mediana del ingreso imponible de los asalariados dependientes"
@@ -224,13 +225,13 @@ server <- function(input, output) {
       geom_text_repel(aes(label = valor |> round(0) |> signif(4) |> format(trim = T, big.mark = ".", decimal.mark = ",")),
                       hjust = 0, vjust = 0.5, color = color_texto, 
                       nudge_x = nrow(ingresos_nacional())*0.018, nudge_y = max(ingresos_nacional()$valor)*0.04,
-                      size = 3, angle = 45, direction = "y",
+                      size = 4, angle = 45, direction = "y",
                       box.padding = 0.2, point.padding = 9, xlim = c(0, 20)) +
       # texto regiones
       geom_text(aes(label = region_corta),
-                angle = 90, hjust = 1, vjust = 0.5, fontface = "bold",
-                nudge_y = -max(ingresos_nacional()$valor)*0.04,
-                size = 2.7, color = color_texto) +
+                angle = 90, hjust = 1, vjust = 0.4, fontface = "bold",
+                nudge_y = -max(ingresos_nacional()$valor)*0.05,
+                size = 3.5, color = color_texto) +
       coord_cartesian(clip = "off") +
       # escalas
       scale_y_continuous(labels = label_number(accuracy = 1),
@@ -290,15 +291,15 @@ server <- function(input, output) {
                      region, mayor),
                  hjust = 0.5, color = color_texto, fill = color_oscuro, 
                  label.size = 0, label.padding = unit(0.1, "lines"),
-                 nudge_y = max(datos$valor)*0.05,
-                 size = 3) +
+                 nudge_y = max(datos$valor)*0.07,
+                 size = 4) +
       # texto regiones
       geom_text(data = datos_wide, inherit.aes = F,
                 aes(label = region_corta,
                     region, menor),
-                angle = 90, hjust = 1, vjust = 0.5, fontface = "bold",
-                nudge_y = -max(datos$valor)*0.04,
-                size = 2.7, color = color_texto) +
+                angle = 90, hjust = 1, vjust = 0.4, fontface = "bold",
+                nudge_y = -max(datos$valor)*0.05,
+                size = 3.5, color = color_texto) +
       # escalas
       scale_y_continuous(labels = label_number(accuracy = 1),
                          expand = expansion(c(0, 0))) +
@@ -313,8 +314,8 @@ server <- function(input, output) {
   })
   
   
-  ## regional ----
   
+  ## regional ----
   ingresos_region <- reactive({
     ingresos_variable() |> 
       filter(region == input$region) |> 
@@ -325,6 +326,10 @@ server <- function(input, output) {
   ingresos_comunas_region <- reactive({
     ingresos_region() |> 
       filter(nivel == "comuna") |> 
+      # correcciones comunas
+      mutate(comuna = case_match(comuna,
+                                 "Pedro Aguirre Cerda" ~ "PAC",
+                                 .default = comuna)) |> 
       mutate(comuna = fct_reorder(comuna, valor,.desc = TRUE)) |> 
       arrange(comuna) |> 
       mutate(id = 1:n())
@@ -370,13 +375,13 @@ server <- function(input, output) {
       geom_text_repel(aes(label = valor |> round(0) |> signif(4) |> format(trim = T, big.mark = ".", decimal.mark = ",")),
                       hjust = 0, vjust = 0.5, color = color_texto, 
                       nudge_x = nrow(datos)*0.018, nudge_y = max(datos$valor)*0.04,
-                      size = 3, angle = 45, direction = "y",
+                      size = 4, angle = 45, direction = "y",
                       box.padding = 0.2, point.padding = 9, xlim = c(0, 20)) +
       # texto regiones
       geom_text(aes(label = comuna),
-                angle = 90, hjust = 1, vjust = 0.5, fontface = "bold",
+                angle = 90, hjust = 1, vjust = 0.4, fontface = "bold",
                 nudge_y = -max(datos$valor)*0.04,
-                size = 2.7, color = color_texto) +
+                size = 3.5, color = color_texto) +
       # escalas
       scale_y_continuous(labels = label_number(accuracy = 1),
                          expand = expansion(c(0, 0.1))) +
@@ -387,7 +392,7 @@ server <- function(input, output) {
            y = nombre_variable()) +
       # facetas 
       facet_wrap(~grupo, nrow = 1, scales = "free_x") +
-      theme(strip.text = element_text(color = color_texto, face = "bold.italic")) +
+      theme(strip.text = element_text(color = color_detalle_claro, face = "bold")) +
       theme(panel.spacing.x = unit(24, "mm")) +
       coord_cartesian(clip = "off", 
                       xlim = c(1, n_comunas_post+0.2)) +
@@ -462,8 +467,8 @@ server <- function(input, output) {
                      comuna, mayor),
                  hjust = 0.5, color = color_texto, fill = color_oscuro, 
                  label.size = 0, label.padding = unit(0.1, "lines"),
-                 nudge_y = max(datos$valor)*0.05,
-                 size = 3) +
+                 nudge_y = max(datos$valor)*0.07,
+                 size = 4) +
       # # texto regiones
       # geom_text(aes(label = comuna),
       #           angle = 90, hjust = 1, vjust = 0.5, fontface = "bold",
@@ -473,23 +478,23 @@ server <- function(input, output) {
       geom_text(data = datos_wide, inherit.aes = F,
                 aes(label = comuna_corta,
                     comuna, menor),
-                angle = 90, hjust = 1, vjust = 0.5, fontface = "bold",
-                nudge_y = -max(datos$valor)*0.04,
-                size = 2.7, color = color_texto) +
+                angle = 90, hjust = 1, vjust = 0.4, fontface = "bold",
+                nudge_y = -max(datos$valor)*0.05,
+                size = 3.5, color = color_texto) +
       # escalas
       scale_y_continuous(labels = label_number(accuracy = 1),
-                         expand = expansion(c(0, 0.1))) +
+                         expand = expansion(c(0.1, 0.1))) +
       scale_x_discrete(labels = label_wrap(20),
                        expand = expansion(c(0.05, 0.03))) +
-      labs(x = NULL, y = input$variable) +
+      labs(x = NULL, y = nombre_variable()) +
       # facetas 
       facet_wrap(~grupo, nrow = 1, scales = "free_x") +
-      theme(strip.text = element_text(color = color_texto, face = "italic")) +
+      theme(strip.text = element_text(color = color_detalle_claro, face = "bold")) +
       theme(panel.spacing.x = unit(12, "mm")) +
       coord_cartesian(clip = "off", 
                       xlim = c(1, n_comunas_post+0.2)) +
       scale_color_manual(values = c("Femenino" = color_femenino, "Masculino" = color_masculino)) +
-      guides(color = guide_legend(position = "bottom", title = NULL,
+      guides(color = guide_legend(position = "top", title = NULL,
                                   theme = theme(legend.text = element_text(margin = margin(l = 1, r = 6))),
                                   override.aes = list(size = 4))) +
       # texto separador entre facetas

@@ -5,7 +5,7 @@ account: bastianoleah
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15311484
-bundleId: 10841135
+bundleId: 10950488
 url: https://bastianoleah.shinyapps.io/mideso_ingresos_genero/
 version: 1
 asMultiple: FALSE
